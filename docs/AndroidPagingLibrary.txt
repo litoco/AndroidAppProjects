@@ -1,0 +1,63 @@
+1. Import the necessary dependencies (have a look at: https://github.com/litoco/AndroidAppProjects/tree/master/AndroidPagingLibrary)
+2. Add Retrofit along with its POJO classes
+3. Create a data source by extending from the existing data sources:
+	i)   PageKeyedDataSource:  Use PageKeyedDataSource if pages you load embed next/previous keys. 
+				   For example, if you're fetching social media posts from the network,
+				   you may need to pass a nextPage token from one load into a subsequent load.
+	ii)  ItemKeyedDataSource:  Use ItemKeyedDataSource if you need to use data from item N to fetch item N+1. 
+				   For example, if you're fetching threaded comments for a discussion app,
+				   you might need to pass the ID of the last comment to get the contents of the next comment.
+	iii) PositionalDataSource: Use PositionalDataSource if you need to fetch pages of data from any location you choose in your data store. 
+				   This class supports requesting a set of data items beginning from whatever location you select. 
+				   For example, in cotacts list the request might return the name of people beginning with letter "m".
+   Here we will be using "PositionalDataSource<value>" as we using zomato api and it provides restaurants list with 20,
+   restaurants with a given starting index. Here Generic type value "<value>" in "PositionalDataSource<value>" is, 
+   the class that the "Retrofit List returns" on querying the api.
+   For example, if we provide 20 as starting index, the api would return restaurants from position 20 to 39 inclusive.
+
+4. Now we need to override some methods in the class created in step 3. Based on the type of data sources implemented, 
+   these methods may vary but one can look up in documentation, about these overriding methods and their purpose. 
+   Here we have extended PositionalDataSource so we have to implement two overriden methods, namely:
+	i)  loadInitial(params, callback): This method is called first time when the recyclerview, listview or
+					   any other view requesting data, asks for the data. 
+					   The "params" argument will contain the configuration details, that
+					   are passed during initialization of "PageList" object.
+					   The "callback" argument's "onResult()" method will update the list with
+					   the new data and this list is passed as an argument to "onResult()" method.
+	ii) loadRange(params, callback)  : This method is called after the loadInitial() method is executed and
+					   there is a requested for new data.
+					   It's parameters are similar to the ones mentioned in loadInitial() method.
+   For code reference go to: https://github.com/litoco/AndroidAppProjects/blob/master/AndroidPagingLibrary/app/src/main/java/www/example/com/androidpaginglibrary/data/ZomatoPagingDataSource.java
+
+5. Now for our custom DataSource we need a "DataSource.Factory" class, in order to send the list of data from, 
+   the "callback.onResult()" method (in step 4) into "PagedList" object. 
+   To create a "Factory" class we need to extend it to "DataSource.Factory<Key, Value>" and override the necessary
+   "create()" method to return the custom "DataSource" that we created above.
+   Here the two generics used:
+	i)  Key:  The Key that is required by the "DataSource", for getting the data. (Here our "DataSource" does not
+		  require any key. So the "type of our key" can be any Class. Like: Integer, String, Float etc.)
+	ii) Value:The value is Type of "Class" that our custom, "DataSource" class Generic has.
+   For code reference go to: https://github.com/litoco/AndroidAppProjects/blob/master/AndroidPagingLibrary/app/src/main/java/www/example/com/androidpaginglibrary/data/ZomatoRestaurantDataSourceFactory.java
+
+6. Now that we have our "DataSource.Factory" class ready, lets create a "PagedList" object that on change will
+   notify our recyclerview, listview or any other view listening for updates in it. This PagedList object is
+   created inside the "ViewModel" so that it survives the configuration change (like portrait to landscape or vice versa).
+   "ViewModel" is just like another java class. It is created by extending to "ViewModel" and this class's 
+   local datas survive device configuration change.
+   "PagedList" needs two arguments as input:
+	i)  DataSourceFactory: That would provide DataSource to "PagedList"
+	ii) Confiugration/Page Size: This would provide additional information to the "DataSource" class. Like:
+				     fetching page size, initial fetching list size, placeholder (like facebook shimmers) etc.
+   For code reference go to: https://github.com/litoco/AndroidAppProjects/blob/master/AndroidPagingLibrary/app/src/main/java/www/example/com/androidpaginglibrary/viewmodel/RestaurantListActivityViewModel.java
+
+7. Now we will setup the "PagedListAdapter" that is a replacement of "RecyclerView.Adapter" for showing PagedList data.
+   It has in addition to recyclerview overriding methods a "DiffUtil.ItemCallback<Value>" field that is passed
+   to the super class of this "PagedListAdapter" class.
+   The "DiffUtil.ItemCallback<Value>" class overrides two methods to be implemented. These method calculate the
+   difference between the objects on another thread (background thread) and on the basis of results provide
+   an animation if needed to modify or add new items to adapter (like calling notifyDataSetChanged() method).
+   For code reference go to: https://github.com/litoco/AndroidAppProjects/blob/master/AndroidPagingLibrary/app/src/main/java/www/example/com/androidpaginglibrary/view/RestaurantAdapter.java
+
+8. In the MainActivity we just need to listen for PagedList object change and when it happens we would notify
+   the adapter about the new data set by calling "adapterObject.submitList(newPageList)".
+   For code reference go to: https://github.com/litoco/AndroidAppProjects/blob/master/AndroidPagingLibrary/app/src/main/java/www/example/com/androidpaginglibrary/MainActivity.java

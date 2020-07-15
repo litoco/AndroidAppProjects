@@ -1,0 +1,14 @@
+1. Create a class extending "Worker" that would do the required background operation.
+   This class requires you to create a constructor that matches its super class. It 
+   takes two arguments as an input (namely: context and workerParams). We don't need
+   to implement this constructor so we don't have learn about them now.
+
+   This class also requires you to override "doWork()" method. The logic of your work
+   goes in this method. For example: you may want to sync users data with your server
+   here.
+   For code go to: https://github.com/litoco/AndroidAppProjects/blob/master/RegularBackgroundTask/app/src/main/java/www/example/com/regularbackgroundtask/MyWorker.java
+
+2. Now in the MainActivity we need to create a "PeriodicWorkRequest" then using 
+   "WorkManager" we need to call "enqueueUniquePeriodicWork()" static method on the 
+   instance of this work manager.
+   For code go to: https://github.com/litoco/AndroidAppProjects/blob/master/RegularBackgroundTask/app/src/main/java/www/example/com/regularbackgroundtask/MainActivity.java
