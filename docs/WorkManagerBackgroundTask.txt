@@ -6,9 +6,9 @@
    This class also requires you to override "doWork()" method. The logic of your work
    goes in this method. For example: you may want to sync users data with your server
    here.
-   For code go to: https://github.com/litoco/AndroidAppProjects/blob/master/RegularBackgroundTask/app/src/main/java/www/example/com/regularbackgroundtask/MyWorker.java
+   For code go to: https://github.com/litoco/AndroidAppProjects/blob/master/WorkManagerPeriodicWorkExample/app/src/main/java/www/example/com/regularbackgroundtask/MyWorker.java
 
 2. Now in the MainActivity we need to create a "PeriodicWorkRequest" then using 
    "WorkManager" we need to call "enqueueUniquePeriodicWork()" static method on the 
    instance of this work manager.
-   For code go to: https://github.com/litoco/AndroidAppProjects/blob/master/RegularBackgroundTask/app/src/main/java/www/example/com/regularbackgroundtask/MainActivity.java
+   For code go to: https://github.com/litoco/AndroidAppProjects/blob/master/WorkManagerPeriodicWorkExample/app/src/main/java/www/example/com/regularbackgroundtask/MainActivity.java
