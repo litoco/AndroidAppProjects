@@ -1,0 +1,56 @@
+Adding volley to android apps:
+
+1. Add following in the app level build.gradle file:
+   implementation 'com.android.volley:volley:1.1.1'
+
+2. Every volley request is created by adding StringRequest to the RequestQueue.
+   i)   So create a request queue by the following code: 
+        RequestQueue requestQueue = new RequestQueue(context);
+   ii)  Also create a request string by the follwing code: (For POST request)
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, 
+		    urlString/*the url for the post request*/,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            //TODO: parse this response from the server according to the need
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //TODO: error occurred, handle error accordingly
+                        }
+                    }){
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+		    //TODO: if you want to send something in the header then create a map like following
+		    //      and return this map
+                    Map<String, String> map = new HashMap<>();
+                    map.put("Authorization","Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjkjZUNvbW1lcmNlIzciLCJyb2xlIjoiQWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3ZlcnNpb24iOiJWMS4wIiwibmJmIjoxNTk1NTgzNTU5LCJleHAiOjE1OTgxNzU1NTksImlhdCI6MTU5NTU4MzU1OX0.izjIp-GCO-yWB3Pa6mbCZTAG4ikfrCoB2h8V1uX2F_o");
+                    return map;
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+		    //TODO: create a JSONObject that will contain the body of specified type
+		    //Eg: let the body be like >> {"key1":{"key2":"value2","key3":value3}, "key4":value4} 
+		    //    to create json object do the following:
+		    //    JSONObject key1Obj = new JSONObject();
+		    //    key1Obj.put("key2", "value2");
+		    //    key1Obj.put("Key3", value);
+		    //    JSONObject mainObj = new JSONObject();
+		    //    mainObj.put("key1", key1Obj);
+		    //    mainObj.put("key4", value4);
+		    //    return mainObj.toString().getBytes(StandardCharsets.UTF_8);
+                    return signUpRequestObject.toString().getBytes(StandardCharsets.UTF_8);
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json";// post request body's type is application/json
+                }
+            };
+        
+3. Now use this to send post request.
+   
